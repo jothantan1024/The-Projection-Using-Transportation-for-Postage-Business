@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batch Content | PTP</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='batch_list.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    
+    <style>
+        .list-container {
+            background-color: #333; color: white; padding: 30px; border-radius: 10px;
+        }
+        .list-title { color: white !important; }
+        .batch-table th { background-color: #444; color: white; border-bottom: 1px solid #555; padding: 12px; }
+        .batch-table td { color: #eee; border-bottom: 1px solid #444; padding: 12px; }
+        .batch-table tr:hover { background-color: #444; }
+        
+        .btn-nav {
+            display: inline-block; padding: 10px 20px; margin: 0 5px; border-radius: 5px;
+            text-decoration: none; font-weight: bold; color: white; transition: opacity 0.3s;
+        }
+        .btn-nav:hover { opacity: 0.8; }
+        .btn-home { background-color: #28a745; }
+        .btn-back { background-color: #6c757d; }
+        .detail-link { color: #4facfe; text-decoration: none; font-weight: bold; }
+
+        @media screen and (max-width: 768px) {
+            .header { flex-direction: column; gap: 10px; }
+            .header-user { justify-content: center; width: 100%; }
+            .list-container { padding: 15px; margin: 15px auto !important; width: 100%; box-sizing: border-box; }
+
+            .list-title { font-size: 1.5rem; }
+            .toolbar { margin-bottom: 20px !important; }
+            .btn-delete { width: 100%; padding: 15px !important; font-size: 1rem; }
+
+            .btn-nav { display: block; width: 100%; margin: 10px 0; box-sizing: border-box; text-align: center; }
+
+            .batch-table thead { display: none; }
+            
+            .batch-table, .batch-table tbody, .batch-table tr, .batch-table td {
+                display: block;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .batch-table tr {
+                margin-bottom: 15px;
+                background-color: #3b3b3b;
+                border: 1px solid #555;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            }
+
+            .batch-table td {
+                display: flex;
+                justify-content: space-between; 
+                align-items: center;
+                text-align: right;
+                padding: 12px 15px;
+                border-bottom: 1px solid #444;
+                min-height: 45px;
+            }
+
+            .batch-table td:last-child { border-bottom: none; }
+
+            .batch-table td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                color: #aaa;
+                text-transform: uppercase;
+                font-size: 0.8em;
+                margin-right: 15px;
+                text-align: left;
+            }
+
+            .batch-table td[data-label="Destination"] div {
+                justify-content: flex-end; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-logo"><i class="fa-solid fa-truck-fast"></i> <span>Parcel Transport Planner</span></div>
+        <div class="header-user">
+            {% if session['is_admin'] %}
+                <span style="background-color: #dc3545; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-right: 5px;">ADMIN</span>
+            {% else %}
+                <span style="background-color: #28a745; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-right: 5px;">DRIVER</span>
+            {% endif %}
+            <span>{{ username }}</span>
+            <a href="{{ url_for('logout') }}" class="logout-link"><i class="fa-solid fa-right-from-bracket"></i></a>
+        </div>
+    </header>
+
+    <div class="list-container" style="max-width: 1000px; margin: 30px auto;">
+        <h1 class="list-title" style="text-align: center; margin-bottom: 10px;">
+            Batch Content: <span style="color: #4facfe;">{{ batch.batch_name }}</span>
+        </h1>
+        <p style="text-align: center; color: #aaa; margin-bottom: 30px;">
+            Contains {{ batch.parcels | length }} Parcels
+        </p>
+
+        <div style="text-align: center;">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <p class="flash-message {{ category }}" style="color: {% if category == 'error' %}#ff6b6b{% else %}#51cf66{% endif %}; font-weight: bold;">{{ message }}</p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <form action="{{ url_for('parcel_bulk_delete') }}" method="POST">
+            {% if session['is_admin'] %}
+            <div class="toolbar" style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                <button class="btn-delete" type="submit" 
+                        style="background-color: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;"
+                        onclick="return confirm('Remove selected parcels?')">
+                    <i class="fa-solid fa-trash"></i> Delete Selected
+                </button>
+            </div>
+            {% endif %}
+
+            <table class="batch-table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th>{% if session['is_admin'] %}<input type="checkbox">{% else %}#{% endif %}</th>
+                        <th>Parcel ID</th>
+                        <th>Destination</th> 
+                        <th>Volume (m³)</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for parcel in batch.parcels %}
+                    <tr>
+                        <td style="text-align: center;" data-label="Select / #">
+                            {% if session['is_admin'] %}
+                                <input type="checkbox" name="parcel_ids" value="{{ parcel.id }}">
+                            {% else %}
+                                {{ loop.index }}
+                            {% endif %}
+                        </td>
+                        <td data-label="Parcel ID"><span style="font-weight: bold; color: white;">{{ parcel.external_parcel_id }}</span></td>
+                        
+                        <td data-label="Destination">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-location-dot" style="color: #ff6b6b;"></i>
+                                <span style="color: #eee;">{{ parcel.delivery_address }}</span>
+                            </div>
+                        </td>
+
+                        <td data-label="Volume">{{ parcel.estimated_volume }}</td>
+                        <td data-label="Action"><a href="{{ url_for('parcel_detail', parcel_id=parcel.id) }}" class="detail-link">Detail</a></td>
+                    </tr>
+                    {% endfor %}
+                    
+                    {% if not batch.parcels %}
+                    <tr><td colspan="5" style="text-align: center; padding: 30px; color: #999;">This batch is empty.</td></tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </form>
+
+        <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #555;">
+            {% if not session.get('is_admin') %}
+                <a href="{{ url_for('dashboard') }}" class="btn-nav btn-home"><i class="fa-solid fa-house"></i> Back to Dashboard</a>
+            {% endif %}
+            <a href="{{ url_for('batch_detail', batch_id=batch.id) }}" class="btn-nav btn-back"><i class="fa-solid fa-arrow-left"></i> Back to Batch Info</a>
+            {% if session.get('is_admin') %}
+                <a href="{{ url_for('batch_list') }}" class="btn-nav btn-back" style="background-color: #444;">Back to Full List</a>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

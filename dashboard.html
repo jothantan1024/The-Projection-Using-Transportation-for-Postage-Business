@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Parcel Transport Planner</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* New Style for Locked Buttons (Staff View) */
+        .grid-item.locked {
+            background-color: #444; /* Darker grey */
+            color: #777; /* Dimmed text */
+            cursor: not-allowed;
+            opacity: 0.6;
+            pointer-events: none; /* Disable clicking */
+            position: relative;
+        }
+        
+        /* Optional: Add a lock icon overlay */
+        .grid-item.locked::after {
+            content: '\f023'; /* FontAwesome Lock Icon */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.2rem;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-logo">
+            <i class="fa-solid fa-truck-fast"></i>
+            <span>Parcel Transport Planner</span>
+        </div>
+        <div class="header-user">
+            {% if session['is_admin'] %}
+                <span style="background-color: #dc3545; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-right: 5px;">ADMIN</span>
+            {% else %}
+                <span style="background-color: #28a745; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-right: 5px;">STAFF</span>
+            {% endif %}
+            
+            <span>{{ username }}</span>
+            <i class="fa-solid fa-circle-user"></i>
+            <a href="{{ url_for('logout') }}" class="logout-link" title="Logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </a>
+        </div>
+    </header>
+
+    <main class="main-container">
+        
+        <div class="welcome-bubble">
+            WELCOME, {{ username }}
+        </div>
+        
+        <div style="text-align: center; margin-bottom: 20px;">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div style="padding: 10px; border-radius: 5px; margin: 5px auto; width: 80%; 
+                                    background-color: {% if category == 'error' %}#f8d7da{% else %}#d4edda{% endif %};
+                                    color: {% if category == 'error' %}#721c24{% else %}#155724{% endif %};">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <div class="grid-container">
+            <a href="{{ url_for('analysis') }}" class="grid-item">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Dashboard Analysis</span>
+            </a>
+            
+            <a href="{{ url_for('parcel_list') }}" class="grid-item">
+                <i class="fa-solid fa-box"></i>
+                <span>Parcel List</span>
+            </a>
+            
+            {% if session['is_admin'] %}
+                <a href="{{ url_for('vehicle_list') }}" class="grid-item">
+                    <i class="fa-solid fa-truck"></i>
+                    <span>Vehicle List</span>
+                </a>
+            {% else %}
+                <div class="grid-item locked" title="Admin Access Only">
+                    <i class="fa-solid fa-truck"></i>
+                    <span>Vehicle List</span>
+                </div>
+            {% endif %}
+            
+            <a href="{{ url_for('upload') }}" class="grid-item">
+                <i class="fa-solid fa-upload"></i>
+                <span>Upload Parcel</span>
+            </a>
+            
+            <a href="{{ url_for('batch_list') }}" class="grid-item">
+                <i class="fa-solid fa-list-check"></i>
+                <span>Batch List</span>
+            </a>
+                <a href="{{ url_for('setting') }}" class="grid-item">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>System Settings</span>
+                </a>
+        </div>
+
+    </main>
+
+</body>
+</html>

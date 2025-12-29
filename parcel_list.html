@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parcel List | PTP</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='batch_list.css') }}">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-logo">
+            <i class="fa-solid fa-truck-fast"></i>
+            <span>Parcel Transport Planner</span>
+        </div>
+        <div class="header-user">
+            {% if session['is_admin'] %}
+                <span style="background-color: #dc3545; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-right: 5px;">ADMIN</span>
+            {% else %}
+                <span style="background-color: #28a745; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-right: 5px;">STAFF</span>
+            {% endif %}
+            
+            <span>{{ username }}</span>
+            <i class="fa-solid fa-circle-user"></i>
+            <a href="{{ url_for('logout') }}" class="logout-link" title="Logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </a>
+        </div>
+    </header>
+
+    <div class="list-container">
+        <h1 class="list-title">Parcel List</h1>
+
+        <div style="text-align: center;">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <p class="flash-message {{ category }}" style="color: {% if category == 'error' %}red{% else %}#4CAF50{% endif %}; font-weight: bold;">
+                            {{ message }}
+                        </p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <form action="{{ url_for('parcel_bulk_delete') }}" method="POST">
+            <div class="toolbar">
+                <form action="{{ url_for('parcel_list') }}" method="GET" style="display: flex; flex: 1;">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" name="search_query" placeholder="Search ID or Name..." value="{{ search_query or '' }}">
+                    </div>
+                </form>
+                
+                {% if session['is_admin'] %}
+                <div class="action-buttons" style="margin-left: auto;">
+                    <button class="btn-delete" type="submit" 
+                            onclick="return confirm('Are you sure you want to delete the selected parcels?')">
+                        <i class="fa-solid fa-trash"></i> Delete
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+
+            <table class="batch-table">
+                <thead>
+                    <tr>
+                        <th>{% if session['is_admin'] %}<input type="checkbox">{% else %}#{% endif %}</th>
+                        <th>Parcel ID</th>
+                        <th>Weight (kg)</th>
+                        <th>Dimensions</th>
+                        <th>Volume (m^3)</th>
+                        <th>Batch ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for parcel in parcels %}
+                    <tr>
+                        <td>
+                            {% if session['is_admin'] %}
+                                <input type="checkbox" name="parcel_ids" value="{{ parcel.id }}">
+                            {% else %}
+                                {{ loop.index }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('parcel_detail', parcel_id=parcel.id) }}" class="batch-id-link" style="font-weight: bold;">
+                                {% if 'OCR' in parcel.external_parcel_id %}
+                                    <span style="color: #999; font-weight: normal;">(Pending ID: {{ parcel.id }})</span>
+                                {% else %}
+                                    <span>{{ parcel.external_parcel_id }}</span>
+                                {% endif %}
+                            </a>
+                        </td>
+                        <td>{{ parcel.weight }}</td>
+                        <td>{{ parcel.dimensions }}</td>
+                        <td>{{ parcel.estimated_volume }}</td>
+                        <td>
+                            {% if parcel.batch %}
+                            <a href="{{ url_for('batch_detail', batch_id=parcel.batch.id) }}" class="batch-id-link" style="color: #ccc;">
+                                {{ parcel.batch.batch_name.split(' (')[0] }}
+                            </a>
+                            {% else %}
+                                <span style="color: #999;">(Unassigned)</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    
+                    {% if not parcels %}
+                    <tr>
+                        <td colspan="6" style="text-align: center;">No parcels found.</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </form>
+    </div>
+
+    <a href="{{ url_for('dashboard') }}" class="back-button">Back to Mainpage</a>
+
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Parcel | Parcel Transport Planner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='upload.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-logo">
+            <i class="fa-solid fa-truck-fast"></i>
+            <span>Parcel Transport Planner</span>
+        </div>
+        <div class="header-user">
+            <span>{{ username }}</span>
+            <i class="fa-solid fa-circle-user"></i>
+            <a href="{{ url_for('logout') }}" class="logout-link" title="Logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </a>
+        </div>
+    </header>
+
+    <h1 class="upload-title">Upload Parcel Image</h1>
+    
+    <div style="width: 90%; margin: -20px auto 10px; text-align: center;">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <p class="flash-message {{ category }}" style="color: {% if category == 'error' %}red{% else %}#4CAF50{% endif %}; font-weight: bold;">
+                        {{ message }}
+                    </p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <main class="upload-container">
+
+        <section class="upload-panel batch-status-panel">
+            <h3>Current Status of Batch</h3>
+            
+            <ul class="batch-status-list">
+                {% for batch in batches %}
+                    {% set utilization = (batch.current_volume / batch.max_volume * 100) | round(0) | int %}
+                    
+                    {% set color_class = 'status-green' %}
+                    {% if utilization > 50 and utilization < 80 %}
+                        {% set color_class = 'status-yellow' %}
+                    {% elif utilization >= 80 %}
+                        {% set color_class = 'status-red' %}
+                    {% endif %}
+
+                    <li>
+                        {{ loop.index }}.
+                        <a href="{{ url_for('batch_detail', batch_id=batch.id) }}" class="{{ color_class }}" style="text-decoration: none;">
+                            {{ batch.batch_name }} {{ utilization }}%
+                        </a>
+                    </li>
+                {% endfor %}
+                
+                {% if not batches %}
+                    <li>No active batches found.</li>
+                {% endif %}
+            </ul>
+
+            <ul class="batch-legend">
+                <li><span class="legend-color" style="background-color: #4CAF50;"></span> 0% - 50%</li>
+                <li><span class="legend-color" style="background-color: #FFEB3B;"></span> 51% - 79%</li>
+                <li><span class="legend-color" style="background-color: #F44336;"></span> 80% - 90%</li>
+            </ul>
+            
+            <div class="upload-tips">
+                <h3>Upload Tips</h3>
+                <ul>
+                    <li>1. Ensure good lighting</li>
+                    <li>2. Avoid background clutter</li>
+                    <li>3. Capture full parcel dimensions</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="upload-panel upload-zone-panel">
+            
+            <form method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data">
+                
+                <h3>Select a Parcel Image to Upload</h3>
+                
+                <input type="file" name="parcel_image" required style="color: #ccc; margin-top: 20px;">
+                
+                <button type="submit" class="btn-blue" style="margin-top: 20px;">Submit This Parcel</button>
+                
+                <a href="{{ url_for('dashboard') }}" class="btn-blue" style="margin-top: 15px; background-color: #6c757d;">Back to Mainpage</a>
+            
+            </form>
+        </section>
+
+        <section class="upload-panel file-list-panel">
+            <h3>Uploaded Images</h3>
+            
+            <ul class="uploaded-files-list" id="file-list">
+                <li id="no-files-msg">No files uploaded yet.</li>
+            </ul>
+
+             <a href="{{ url_for('parcel_list') }}" class="btn-blue" style="margin-top: 20px;">View All Parcels</a>
+        </section>
+
+    </main>
+
+</body>
+</html>

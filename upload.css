@@ -1,0 +1,181 @@
+/* --- 继承 dashboard 的基本样式 --- */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #333333;
+    color: white;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #007BFF;
+    padding: 10px 20px;
+    color: white;
+}
+.header-logo { display: flex; align-items: center; font-size: 1.2em; font-weight: bold; }
+.header-logo i { font-size: 1.5em; margin-right: 10px; }
+.header-user { display: flex; align-items: center; position: relative; }
+.header-user span { margin-right: 10px; }
+.header-user i { font-size: 1.5em; margin-left: 10px; }
+.logout-link { color: white; text-decoration: none; font-size: 1.2em; margin-left: 15px; }
+.logout-link:hover { color: #e0e0e0; }
+
+/* --- 页面标题 --- */
+.upload-title {
+    text-align: center;
+    font-size: 2em;
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+/* --- 3栏主布局 --- */
+.upload-container {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr; /* 3栏布局 */
+    gap: 20px;
+    padding: 0 20px 20px 20px;
+    width: 95%;
+    margin: 0 auto;
+}
+
+/* --- 共享的面板样式 --- */
+.upload-panel {
+    background-color: #444; /* 深灰色面板 */
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.upload-panel h3 {
+    margin-top: 0;
+    border-bottom: 2px solid #555;
+    padding-bottom: 10px;
+}
+
+/* --- 按钮 (蓝色) --- */
+.btn-blue {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none; /* 用于 <a> 标签 */
+    box-sizing: border-box; /* 确保 padding 不会撑开宽度 */
+    transition: background-color 0.2s;
+}
+.btn-blue:hover {
+    background-color: #0056b3;
+}
+
+/* --- 左侧面板: Batch Status --- */
+.batch-status-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.batch-status-list li {
+    font-size: 1.1em;
+    margin-bottom: 12px;
+}
+.batch-status-list .status-green { color: #4CAF50; font-weight: bold; }
+.batch-status-list .status-yellow { color: #FFEB3B; font-weight: bold; }
+.batch-status-list .status-red { color: #F44336; font-weight: bold; }
+
+.batch-legend {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+.batch-legend li {
+    margin-bottom: 5px;
+}
+.legend-color {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+/* --- 左侧面板: Upload Tips --- */
+.upload-tips {
+    margin-top: 20px;
+}
+.upload-tips h3 {
+    font-size: 1.2em;
+}
+.upload-tips ul {
+    font-size: 0.9em;
+    color: #ccc;
+    padding-left: 20px;
+}
+
+/* --- 中间面板: 拖拽区域 --- */
+.drop-zone {
+    border: 3px dashed #888;
+    border-radius: 10px;
+    padding: 40px;
+    text-align: center;
+    background-color: #3a3a3a;
+    margin-bottom: 20px;
+}
+.drop-zone i {
+    font-size: 4em;
+    color: #ccc;
+}
+.drop-zone p {
+    font-size: 1.2em;
+    margin: 10px 0;
+}
+.drop-zone .browse-btn {
+    /* 这是一个特殊的按钮，内嵌在拖拽区 */
+    width: 50%;
+    margin: 10px auto 0;
+}
+.drop-zone-support {
+    font-size: 0.9em;
+    color: #aaa;
+    margin-top: 10px;
+}
+
+/* --- 右侧面板: Uploaded Images --- */
+.uploaded-files-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+    height: 250px; /* 给一个固定高度，让它可以滚动 */
+    overflow-y: auto;
+    background-color: #3a3a3a;
+    border: 1px solid #555;
+    padding: 10px;
+    border-radius: 5px;
+}
+.uploaded-files-list li {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    background-color: #444;
+    margin-bottom: 5px;
+    border-radius: 3px;
+}
+.uploaded-files-list i {
+    font-size: 1.5em;
+    color: #ccc;
+    margin-right: 10px;
+}
+
+/* --- 页面底部的按钮 --- */
+/* (我们把它们放在各自的面板里，用 margin-top 隔开) */
+.upload-panel .btn-blue,
+.batch-status-panel .btn-blue,
+.file-list-panel .btn-blue {
+    margin-top: 20px;
+}

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parcel Transport Planner</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <style>
+    body { margin: 0; padding: 0; font-family: sans-serif; }
+
+    img { max-width: 100%; height: auto; }
+
+    @media screen and (max-width: 768px) {
+        
+
+        header {
+            padding: 15px 20px !important;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem; 
+            font-weight: bold;
+        }
+        
+        .logo img {
+            height: 30px; 
+            width: auto;
+        }
+
+        .login-btn {
+            padding: 8px 15px !important;
+            font-size: 0.9rem;
+            white-space: nowrap; 
+        }
+
+        .hero {
+            display: flex;
+            flex-direction: column; 
+            padding: 40px 20px !important;
+            text-align: center; 
+            height: auto !important; 
+            min-height: 80vh;
+            justify-content: center;
+        }
+
+        .hero-text {
+            width: 100%;
+            margin-bottom: 30px; 
+        }
+
+        .hero-text h1 {
+            font-size: 2.2rem !important; 
+            line-height: 1.2;
+            margin-bottom: 10px;
+        }
+
+        .hero-text h2 {
+            font-size: 1.2rem !important; 
+            color: #666;
+            font-weight: normal;
+        }
+
+        .hero-image {
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        .hero-image img {
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        footer {
+            padding: 20px;
+            font-size: 0.8rem;
+        }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+    <div class="logo" style="display: flex; align-items: center; gap: 10px; font-weight: bold; font-size: 1.2rem; color: #333;">
+      <img src="{{ url_for('static', filename='truck-icon.png') }}" alt="Logo" style="height: 40px;">
+      <span>Parcel Transport Planner</span>
+    </div>
+    <a href="{{ url_for('login') }}" class="login-btn" style="text-decoration: none; background-color: #007bff; color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold;">Login</a>
+  </header>
+
+  <section class="hero" style="display: flex; align-items: center; justify-content: space-between; padding: 60px 50px; max-width: 1200px; margin: 0 auto; gap: 40px;">
+    <div class="hero-text" style="flex: 1;">
+      <h1 style="font-size: 3.5rem; color: #333; margin: 0 0 10px 0;">Simple, Faster, and Reliable</h1>
+      <h2 style="font-size: 1.5rem; color: #007bff; margin: 0;">Parcel Transport Planner</h2>
+      <div style="margin-top: 30px;">
+          <a href="{{ url_for('register') }}" style="display: inline-block; padding: 12px 30px; background-color: #28a745; color: white; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 1.1rem; box-shadow: 0 4px 6px rgba(40, 167, 69, 0.3);">Get Started</a>
+      </div>
+    </div>
+    <div class="hero-image" style="flex: 1;">
+      <img src="{{ url_for('static', filename='delivery-van.jpg') }}" alt="Delivery Van" style="width: 100%; border-radius: 20px;">
+    </div>
+  </section>
+
+  <footer style="text-align: center; padding: 30px; background-color: #f8f9fa; color: #666; border-top: 1px solid #eee; margin-top: 50px;">
+    <p>&copy; 2025 Parcel Transport Planner. All Rights Reserved.</p>
+  </footer>
+
+</body>
+</html>

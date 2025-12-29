@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Dashboard | PTP</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: #333; 
+            color: white;
+        }
+
+        @media screen and (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .header-user {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .main-container {
+                padding: 15px;
+            }
+
+            .mission-header {
+                flex-direction: column !important; 
+                align-items: flex-start !important;
+                gap: 10px;
+            }
+
+            .mission-actions {
+                flex-direction: column;
+                gap: 10px !important;
+            }
+
+            .mission-actions a, 
+            .mission-actions form, 
+            .mission-actions button {
+                width: 100%;
+                display: block;
+                text-align: center;
+            }
+
+            .mission-actions form {
+                margin: 0;
+            }
+            
+            .grid-container {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-logo"><i class="fa-solid fa-truck-fast"></i> <span>Driver Portal</span></div>
+        <div class="header-user">
+            <span style="background-color: #28a745; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-right: 5px;">DRIVER</span>
+            <span>{{ username }}</span>
+            <a href="{{ url_for('logout') }}" class="logout-link" style="color: white; margin-left: 10px;"><i class="fa-solid fa-right-from-bracket"></i></a>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="welcome-bubble" style="background: #e9ecef; padding: 10px 20px; border-radius: 20px; display: inline-block; margin-bottom: 20px; font-weight: bold; color: #555;">WELCOME, {{ username }}</div>
+
+        <div style="text-align: center; margin-bottom: 20px;">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <p class="flash-message {{ category }}" style="color: {% if category=='error' %}red{% else %}green{% endif %}; font-weight: bold;">{{ message }}</p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <div style="max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px;">
+            
+            <div>
+                <h3 style="color: #ffffff; border-bottom: 2px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">
+                    <i class="fa-solid fa-key"></i> My Vehicles
+                </h3>
+                <div class="grid-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                    {% for v in vehicles %}
+                    <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; border-left: 5px solid {% if v.status=='Available' %}#28a745{% else %}#ffc107{% endif %};">
+                        
+                        <div style="margin-bottom: 10px;">
+                            <i class="fa-solid fa-truck-front" style="font-size: 2.5rem; color: #2a5298;"></i>
+                        </div>
+                        
+                        <div style="font-size: 1.4rem; font-weight: 800; color: #333; margin-bottom: 5px;">
+                            {{ v.vehicle_uid }}
+                        </div>
+
+                        <div style="background-color: #f8f9fa; padding: 8px; border-radius: 5px; margin-bottom: 10px; border: 1px solid #eee;">
+                            <div style="color: #555; font-weight: bold;">{{ v.vehicle_type }}</div>
+                            <div style="color: #888; font-size: 0.9em; letter-spacing: 1px;">{{ v.plate_number }}</div>
+                        </div>
+                        
+                        <div style="display: inline-block; padding: 4px 12px; border-radius: 15px; font-weight: bold; font-size: 0.9em; 
+                                        background-color: {% if v.status=='Available' %}#d1e7dd{% else %}#fff3cd{% endif %};
+                                        color: {% if v.status=='Available' %}#0f5132{% else %}#856404{% endif %};">
+                            {{ v.status }}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div style="color: #999; padding: 20px; text-align: center; background: white; border-radius: 8px;">
+                        No vehicles assigned to you.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div>
+                <h3 style="color: #ffffff; border-bottom: 2px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">
+                    <i class="fa-solid fa-clipboard-list"></i> Active Missions
+                </h3>
+                
+                {% for mission in missions %}
+                <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); margin-bottom: 20px; border-left: 6px solid {% if mission.status=='Ready' %}#ffc107{% else %}#28a745{% endif %};">
+                    
+                    <div class="mission-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                        <div>
+                            <div style="font-size: 1.3rem; font-weight: bold; color: #2a5298;">{{ mission.batch_name }}</div>
+                            <div style="color: #666; margin-top: 5px;">
+                                Vehicle: <strong style="color: #333;">{{ mission.vehicle.vehicle_uid }}</strong> 
+                                <span style="font-size: 0.9em; color: #888;">({{ mission.vehicle.plate_number }})</span>
+                            </div>
+                        </div>
+                        <div style="padding: 6px 12px; border-radius: 6px; font-weight: bold; text-transform: uppercase; font-size: 0.85em;
+                                        background: {% if mission.status=='Ready' %}#fff3cd{% else %}#d1e7dd{% endif %}; 
+                                        color: {% if mission.status=='Ready' %}#856404{% else %}#0f5132{% endif %};">
+                            {{ mission.status }}
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85em; color: #666; margin-bottom: 5px;">
+                        <span>Load Usage</span>
+                        <span>{{ (mission.current_volume / mission.max_volume * 100) | int }}%</span>
+                    </div>
+                    <div style="background: #eee; height: 12px; border-radius: 6px; overflow: hidden; margin-bottom: 20px;">
+                        <div style="background: linear-gradient(90deg, #2a5298, #00bfff); width: {{ (mission.current_volume / mission.max_volume * 100) }}%; height: 100%;"></div>
+                    </div>
+
+                    <div class="mission-actions" style="display: flex; gap: 15px; justify-content: flex-end; flex-wrap: wrap;">
+                        <a href="{{ url_for('batch_parcel_list', batch_id=mission.id) }}" class="btn-blue" style="text-decoration: none; background-color: #6c757d; padding: 10px 20px; border-radius: 5px; color: white; display: inline-block;">
+                            <i class="fa-solid fa-list"></i> View Content
+                        </a>
+
+                        {% if mission.status == 'Ready' %}
+                            <form action="{{ url_for('driver_start_mission', batch_id=mission.id) }}" method="POST">
+                                <button type="submit" class="btn-blue" style="background-color: #ff9800; border: none; padding: 10px 25px; cursor: pointer; font-weight: bold; border-radius: 5px; color: white;">
+                                    Start Mission <i class="fa-solid fa-play"></i>
+                                </button>
+                            </form>
+                        {% elif mission.status == 'Transporting' %}
+                            <form action="{{ url_for('driver_complete_mission', batch_id=mission.id) }}" method="POST">
+                                <button type="submit" class="btn-blue" style="background-color: #28a745; border: none; padding: 10px 25px; cursor: pointer; font-weight: bold; border-radius: 5px; color: white;" onclick="return confirm('Confirm delivery completed?')">
+                                    Complete <i class="fa-solid fa-check"></i>
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+                {% else %}
+                <div style="background: #f8f9fa; padding: 40px; text-align: center; border-radius: 12px; border: 2px dashed #ddd;">
+                    <i class="fa-solid fa-mug-hot" style="font-size: 3rem; color: #ccc; margin-bottom: 15px;"></i>
+                    <div style="font-weight: bold; color: #666;">No active missions</div>
+                    <div style="color: #999;">Relax! Wait for the manager to dispatch tasks.</div>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </main>
+</body>
+</html>

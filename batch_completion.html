@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batch Completed | PTP</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='batch_completion.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-logo"><i class="fa-solid fa-truck-fast"></i><span>Parcel...</span></div>
+        <div class="header-user">
+            <span>{{ username }}</span>
+            <i class="fa-solid fa-circle-user"></i>
+            <a href="{{ url_for('logout') }}" class="logout-link" title="Logout">...</a>
+        </div>
+    </header>
+
+    <div class="completion-container">
+        <h1 class="completion-title">Batch Completion</h1>
+
+        <div class="summary-panel">
+            <h3>Batch Info Section</h3>
+            <div class="summary-grid">
+
+                <div class="info-item">
+                    <span class="label">Batch Number</span>
+                    <span class="value">{{ batch.batch_name }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Current Batch Type</span>
+                    <span class="value">{{ batch.batch_type | capitalize }} Parcels</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Recommended Vehicle</span>
+                    <span class="value">{% if batch.vehicle %}{{ batch.vehicle.vehicle_type }}{% else %}N/A{% endif %}</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="label">Total Load Utilization</span>
+                    <span class="value-large">{{ (batch.current_volume / batch.max_volume * 100) | round(0) | int }}%</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Volume Usage (m^3)</span>
+                    <span class="value">{{ batch.current_volume | round(3) }} / {{ batch.max_volume }} m³</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Status</span>
+                    <span class="value" style="color: #28A745; font-weight: bold;">{{ batch.status }}</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="label">Total Parcel</span>
+                    <span class="value-large">{{ batch.parcels | length }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Completion Time</span>
+                    <span class="value">{{ batch.completion_time.strftime('%d %b %Y, %I:%M %p') }}</span>
+                </div>
+
+            </div>
+        </div>
+
+        <a href="{{ url_for('batch_list') }}" class="btn-blue">Back to List</a>
+        <a href="{{ url_for('upload') }}" class="btn-blue btn-grey">Back to Upload Parcel Batch</a>
+    </div>
+
+</body>
+</html>

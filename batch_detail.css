@@ -1,0 +1,129 @@
+/* --- 继承基本样式 --- */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #333333;
+    color: white;
+}
+/* (我们复用 dashboard.css 里的 .header 样式) */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #007BFF;
+    padding: 10px 20px;
+    color: white;
+}
+.header-logo { display: flex; align-items: center; font-size: 1.2em; font-weight: bold; }
+.header-logo i { font-size: 1.5em; margin-right: 10px; }
+.header-user { display: flex; align-items: center; position: relative; }
+.header-user span { margin-right: 10px; }
+.header-user i { font-size: 1.5em; margin-left: 10px; }
+.logout-link { color: white; text-decoration: none; font-size: 1.2em; margin-left: 15px; }
+
+/* --- 页面标题 --- */
+.detail-title {
+    text-align: center;
+    font-size: 2em;
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+/* --- 页面容器 --- */
+.detail-container {
+    width: 70%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* --- 共享的面板样式 --- */
+.detail-panel {
+    background-color: #444;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* --- 顶部包裹列表 --- */
+.parcel-list-box {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.parcel-list-box .icon {
+    font-size: 3em;
+    color: #ccc;
+    padding: 10px;
+    background-color: #3a3a3a;
+    border-radius: 5px;
+}
+.parcel-list-box .file-names {
+    font-family: 'Courier New', Courier, monospace;
+}
+.parcel-list-box .file-names p {
+    margin: 5px 0;
+}
+.parcel-list-box .file-names .parcel-ids {
+    color: #00BFFF; /* 亮蓝色 */
+    font-size: 0.9em;
+}
+
+/* --- 批次信息 (网格布局) --- */
+.batch-info-grid {
+    display: grid;
+    /* 3列布局 */
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+}
+.info-item {
+    background-color: #3a3a3a;
+    padding: 10px;
+    border-radius: 5px;
+}
+.info-item .label {
+    font-size: 0.9em;
+    color: #ccc;
+    display: block;
+    margin-bottom: 5px;
+}
+.info-item .value {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+.info-item .value-large {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #00BFFF;
+}
+
+/* --- 按钮区域 --- */
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 10px;
+}
+.btn-blue {
+    padding: 12px 25px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+.btn-blue:hover {
+    background-color: #0056b3;
+}
+.btn-grey {
+    background-color: #6c757d;
+}
+.btn-grey:hover {
+    background-color: #5a6268;
+}

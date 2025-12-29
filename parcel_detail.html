@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail: {{ parcel.external_parcel_id }} | PTP</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='batch_detail.css') }}">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-logo">
+            <i class="fa-solid fa-truck-fast"></i>
+            <span>Parcel Transport Planner</span>
+        </div>
+        <div class="header-user">
+            <span>{{ username }}</span>
+            <i class="fa-solid fa-circle-user"></i>
+            <a href="{{ url_for('logout') }}" class="logout-link" title="Logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </a>
+        </div>
+    </header>
+
+    <h1 class="detail-title">Parcel Detail</h1>
+
+    <main class="detail-container">
+
+        <section class="detail-panel parcel-list-box">
+            <i class="fa-solid fa-image icon"></i>
+            <div class="file-names">
+                <p>{{ parcel.parcel_name }}</p>
+                
+                <p class"parcel-ids" style="color: #00BFFF; font-weight: bold;">
+                    {% if 'OCR' in parcel.external_parcel_id %}
+                        (Pending ID: {{ parcel.id }})
+                    {% else %}
+                        Parcel ID {{ parcel.external_parcel_id }}
+                    {% endif %}
+                </p>
+            </div>
+        </section>
+
+        <section class="detail-panel">
+            <div class="batch-info-grid">
+                
+                <div class="info-item">
+                    <span class="label">Dimensions (L*W*H)</span>
+                    <span class="value">{{ parcel.dimensions }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Weight (kg)</span>
+                    <span class="value">{{ parcel.weight }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Volume (m^3)</span>
+                    <span class="value-large" style="color: #00BFFF;">{{ parcel.estimated_volume }}</span>
+                </div>
+                
+            </div>
+        </section>
+
+        <section class="detail-panel">
+            <h3>Batch Info Section</h3>
+            
+            {% if parcel.batch %}
+            <div class="batch-info-grid">
+                <div class="info-item">
+                    <span class="label">Batch Number</span>
+                    <span class="value">{{ parcel.batch.batch_name }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Current Batch Type</span>
+                    <span class="value">{{ parcel.batch.batch_type | capitalize }} Parcels</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Recommended Vehicle</span>
+                    <span class="value">{{ parcel.batch.recommended_vehicle }}</span>
+                </div>
+            </div>
+            {% else %}
+                <p style="color: #ccc; text-align: center;">This parcel has not been assigned to a batch yet.</p>
+            {% endif %}
+        </section>
+
+
+        <section class="button-group">
+            <a href="{{ url_for('upload') }}" class="btn-blue">New Parcel</a> <a href="{{ url_for('parcel_list') }}" class="btn-blue btn-grey">Back to Mainpage</a> </section>
+
+    </main>
+
+</body>
+</html>

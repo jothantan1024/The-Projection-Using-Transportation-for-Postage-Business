@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | PTP</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='setting.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-logo">
+            <i class="fa-solid fa-truck-fast"></i>
+            <span>Parcel Transport Planner</span>
+        </div>
+        <div class="header-user">
+            {% if session['is_admin'] %}
+                <span style="background-color: #dc3545; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-right: 5px;">ADMIN</span>
+            {% else %}
+                <span style="background-color: #28a745; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-right: 5px;">STAFF</span>
+            {% endif %}
+            
+            <span>{{ username }}</span>
+            <i class="fa-solid fa-circle-user"></i>
+            <a href="{{ url_for('logout') }}" class="logout-link" title="Logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </a>
+        </div>
+    </header>
+
+    <div class="setting-container">
+        <h1 class="setting-title">System & Account Settings</h1>
+
+        <div style="text-align: center;">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <p class="flash-message {{ category }}" style="color: {% if category == 'error' %}red{% else %}#4CAF50{% endif %}; font-weight: bold;">
+                            {{ message }}
+                        </p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        {% if session['is_admin'] %}
+        <section class="setting-panel load-panel">
+            <h3>System Parameters</h3>
+            <div class="setting-item">
+                <label>Max Load Utilization (%):</label>
+                <input type="text" value="90" disabled style="background-color: #e9ecef; cursor: not-allowed;">
+                <span style="font-size: 0.8em; color: #666;">(Default)</span>
+            </div>
+            <div class="setting-item">
+                <label>Auto-lock batch when load reaches:</label>
+                <input type="text" value="90%" disabled style="background-color: #e9ecef; cursor: not-allowed;">
+            </div>
+        </section>
+        {% endif %}
+
+        <section class="setting-panel">
+            <h3>Change Password</h3>
+            <form action="{{ url_for('change_password') }}" method="POST">
+                <div style="display: flex; gap: 20px; align-items: flex-end;">
+                    <div style="flex: 1;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Current Password</label>
+                        <input type="password" name="current_password" required style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">New Password</label>
+                        <input type="password" name="new_password" required style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    </div>
+                    <div>
+                        <button type="submit" class="btn-blue" style="padding: 10px 20px;">Update</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <div class="bottom-buttons" style="margin-top: 30px;">
+            <a href="{{ url_for('dashboard') }}" class="btn-blue btn-grey">Back to Mainpage</a>
+        </div>
+    </div>
+
+</body>
+</html>

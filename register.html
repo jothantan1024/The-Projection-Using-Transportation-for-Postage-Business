@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register | Parcel Transport Planner</title>
+  
+  <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+  <div class="main-wrapper">
+    <div class="login-container">
+      
+      <div class="left-panel">
+        <div class="brand-content">
+          <i class="fa-solid fa-truck-fast logo-icon"></i>
+          <h1>Parcel Transport Planner</h1>
+          <p>Join our logistics management platform</p>
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <div class="login-box">
+          <h2>Create Account</h2>
+          <p class="subtitle">Get started with your free account</p>
+          
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              <div class="flash-wrapper">
+                {% for category, message in messages %}
+                  <div class="flash-message {{ category }}">
+                    <i class="fa-solid fa-circle-exclamation"></i> {{ message }}
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+          {% endwith %}
+
+          <form method="POST" action="{{ url_for('register') }}">
+            
+            <div class="input-group">
+              <i class="fa-solid fa-user-plus input-icon"></i>
+              <input type="text" placeholder="Choose Username" name="username" required autocomplete="off">
+            </div>
+
+            <div class="input-group">
+              <i class="fa-solid fa-lock input-icon"></i>
+              <input type="password" placeholder="Choose Password" name="password" required>
+            </div>
+            
+            <button type="submit" class="btn-login" style="background: #28a745;">
+              REGISTER <i class="fa-solid fa-user-check"></i>
+            </button>
+          </form>
+
+          <p class="signup-text">
+            Already have an account? <a href="{{ url_for('login') }}" style="color: #28a745;">Login Here</a>
+          </p>
+        </div>
+      </div>
+      
+    </div>
+    
+    <footer>
+      <p>&copy; 2025 Parcel Transport Planner. All Rights Reserved.</p>
+    </footer>
+  </div>
+
+</body>
+</html>

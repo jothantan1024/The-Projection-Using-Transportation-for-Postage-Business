@@ -1,0 +1,117 @@
+/* --- 全局样式 --- */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    /* 匹配你设计的深色背景 */
+    background-color: #333333; 
+    color: white;
+}
+
+/* --- 顶部导航栏 (Header) --- */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* 匹配你设计的蓝色 */
+    background-color: #007BFF; 
+    padding: 10px 20px;
+    color: white;
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.header-logo i {
+    font-size: 1.5em; /* 图标大小 */
+    margin-right: 10px;
+}
+
+.header-user {
+    display: flex;
+    align-items: center;
+}
+
+.header-user i {
+    font-size: 1.5em; /* 图标大小 */
+    margin-left: 10px;
+}
+
+/* --- 主要内容区 --- */
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+/* --- 欢迎语泡泡 --- */
+.welcome-bubble {
+    background-color: #007BFF;
+    color: white;
+    padding: 15px 40px;
+    /* 匹配你设计的椭圆形 */
+    border-radius: 50px; 
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+/* --- 6格按钮布局 --- */
+.grid-container {
+    display: grid;
+    /* 3列 */
+    grid-template-columns: repeat(3, 1fr); 
+    /* 间距 */
+    gap: 30px; 
+    width: 80%;
+    max-width: 900px;
+}
+
+.grid-item {
+    /* 匹配你设计的浅灰色方块 */
+    background-color: #E0E0E0; 
+    color: #333; /* 方块内的文字颜色 */
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    font-size: 1.1em;
+    font-weight: bold;
+    text-decoration: none; /* 去除链接下划线 */
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* 鼠标悬停效果 */
+.grid-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.grid-item i {
+    /* 方块内的图标 */
+    font-size: 3em; 
+    display: block;
+    margin: 10px auto 15px;
+    color: #007BFF; /* 图标颜色 */
+}
+/* --- 登出按钮样式 --- */
+.header-user {
+    position: relative;
+}
+
+.logout-link {
+    color: white;
+    text-decoration: none;
+    font-size: 1.2em; /* 图标大小 */
+    margin-left: 15px; /* 间距 */
+    transition: color 0.2s;
+}
+
+/* 鼠标悬停时变浅色 */
+.logout-link:hover {
+    color: #e0e0e0;
+}

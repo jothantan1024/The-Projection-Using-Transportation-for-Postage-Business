@@ -1,0 +1,234 @@
+/* 全局重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f0f2f5; /* 浅灰背景 */
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 登录框大容器 */
+.login-container {
+    width: 900px;
+    height: 550px;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1); /* 柔和阴影 */
+    display: flex;
+    overflow: hidden; /* 防止圆角被内部元素盖住 */
+}
+
+/* === 左侧面板 (深色品牌区) === */
+.left-panel {
+    width: 50%;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); /* 深蓝渐变 */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px;
+}
+
+.logo-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+    color: #4facfe; /* 亮蓝色图标 */
+}
+
+.left-panel h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.left-panel p {
+    font-size: 16px;
+    opacity: 0.8;
+}
+
+/* === 右侧面板 (表单区) === */
+.right-panel {
+    width: 50%;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+}
+
+.login-box {
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+}
+
+.login-box h2 {
+    font-size: 26px;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    color: #888;
+    margin-bottom: 30px;
+    font-size: 14px;
+}
+
+/* 输入框样式 */
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 15px 12px 45px; /* 左边留空给图标 */
+    border: 2px solid #eee;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.input-group input:focus {
+    border-color: #2a5298; /* 聚焦变蓝 */
+}
+
+/* 按钮样式 */
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    background: #2a5298;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+.btn-login:hover {
+    background: #1e3c72;
+    transform: translateY(-2px); /* 微微上浮效果 */
+}
+
+/* 底部文字 */
+.signup-text {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #666;
+}
+
+.signup-text a {
+    color: #2a5298;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.signup-text a:hover {
+    text-decoration: underline;
+}
+
+/* 错误消息 */
+.flash-wrapper {
+    margin-bottom: 20px;
+}
+.flash-message {
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+.flash-message.error {
+    background-color: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fca5a5;
+}
+.flash-message.success {
+    background-color: #d1fae5;
+    color: #059669;
+    border: 1px solid #6ee7b7;
+}
+
+footer {
+    margin-top: 30px;
+    color: #999;
+    font-size: 12px;
+}
+/* 将此代码添加到 login.css 的最底部 */
+
+@media screen and (max-width: 768px) {
+    /* 1. 调整外层容器 */
+    .main-wrapper {
+        padding: 20px; /* 给手机边缘留点空隙 */
+        height: auto;  /* 允许高度自适应，防止内容被切掉 */
+        min-height: 100vh;
+    }
+
+    /* 2. 改变 Flex 方向为垂直 */
+    .login-container {
+        flex-direction: column; /* 关键：从左右排变成上下排 */
+        width: 100%;
+        height: auto;
+        overflow: hidden; /* 防止圆角溢出 */
+    }
+
+    /* 3. 调整左侧面板 (现在是顶部 Banner) */
+    .left-panel {
+        width: 100%;
+        height: auto;
+        padding: 30px 20px;
+        text-align: center;
+        border-radius: 0; /* 手机版通常不需要复杂的圆角 */
+    }
+
+    /* 4. 调整右侧面板 (登录表单区) */
+    .right-panel {
+        width: 100%;
+        height: auto;
+        padding: 20px;
+    }
+
+    /* 5. 调整内部登录框的大小 */
+    .login-box {
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    /* 6. 稍微缩小字体，适应手机 */
+    .brand-content h1 {
+        font-size: 1.5rem;
+    }
+    
+    .brand-content p {
+        font-size: 0.9rem;
+    }
+}

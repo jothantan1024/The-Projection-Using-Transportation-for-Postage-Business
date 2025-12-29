@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Batch | PTP</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='create_batch.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+    <header class="header">
+        <div class="header-logo">...</div>
+        <div class="header-user"><span>{{ username }}</span> ...</div>
+    </header>
+
+    <div class="form-container">
+        <h1 class="form-title">Edit Batch</h1>
+
+        <div style="text-align: center;">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <p class="flash-message {{ category }}" style="color: red; font-weight: bold;">{{ message }}</p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <form action="{{ url_for('batch_edit', batch_id=batch.id) }}" method="POST">
+            
+            <div class="form-group">
+                <label>Batch Name</label>
+                <input type="text" name="batch_name" value="{{ batch.batch_name }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Batch Type (Cannot change type to avoid mismatch)</label>
+                <input type="text" value="{{ batch.batch_type }}" disabled style="background-color: #ccc;">
+            </div>
+
+            <div class="form-group">
+                <label>Max Volume (m³) - Currently Used: {{ batch.current_volume }} m³</label>
+                <input type="number" step="0.1" name="max_volume" value="{{ batch.max_volume }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Assigned Vehicle</label>
+                <select name="vehicle_id">
+                    <option value="none" {% if not batch.vehicle_id %}selected{% endif %}>-- No Vehicle (Warehouse Mode) --</option>
+                    {% for v in vehicles %}
+                        <option value="{{ v.id }}" {% if batch.vehicle_id == v.id %}selected{% endif %}>
+                            {{ v.vehicle_uid }} ({{ v.vehicle_type }} - {{ v.capacity_m3 }} m³)
+                        </option>
+                    {% endfor %}
+                </select>
+                <small style="color: #aaa;">Changing vehicle will NOT automatically update Max Volume. Please update manually above if needed.</small>
+            </div>
+
+            <div class="form-group" style="margin-top: 25px; text-align: center;">
+                <button type="submit" class="btn-blue">Update Batch</button>
+                <a href="{{ url_for('batch_list') }}" class="btn-blue btn-grey">Cancel</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

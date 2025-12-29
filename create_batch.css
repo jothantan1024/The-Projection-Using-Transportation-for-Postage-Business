@@ -1,0 +1,78 @@
+/* --- 继承基本样式 --- */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #333333;
+    color: white;
+}
+/* (我们复用 dashboard.css 里的 .header 样式) */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #007BFF;
+    padding: 10px 20px;
+    color: white;
+}
+.header-logo { display: flex; align-items: center; font-size: 1.2em; font-weight: bold; }
+.header-logo i { font-size: 1.5em; margin-right: 10px; }
+.header-user { display: flex; align-items: center; position: relative; }
+.header-user span { margin-right: 10px; }
+.header-user i { font-size: 1.5em; margin-left: 10px; }
+.logout-link { color: white; text-decoration: none; font-size: 1.2em; margin-left: 15px; }
+
+/* --- 表单容器 --- */
+.form-container {
+    width: 50%;
+    margin: 20px auto;
+    background-color: #444;
+    border-radius: 8px;
+    padding: 20px 30px;
+}
+.form-title {
+    text-align: center;
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* --- 表单元素 --- */
+.form-group {
+    margin-bottom: 15px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #ccc;
+    font-weight: bold;
+}
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box; /* 确保 padding 不会撑开宽度 */
+    border: 1px solid #555;
+    border-radius: 5px;
+    background-color: #3a3a3a;
+    color: white;
+    font-size: 1em;
+}
+
+/* --- 按钮 --- */
+.btn-blue {
+    display: inline-block;
+    padding: 12px 25px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+}
+.btn-grey {
+    background-color: #6c757d;
+    margin-left: 10px;
+}

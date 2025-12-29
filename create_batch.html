@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Batch | PTP</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='create_batch.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-logo">...</div>
+        <div class="header-user">
+            <span>{{ username }}</span> ...
+        </div>
+    </header>
+
+    <div class="form-container">
+        <h1 class="form-title">Create New Batch</h1>
+
+        <div style="text-align: center;">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <p class="flash-message {{ category }}" style="color: {% if category == 'error' %}red{% else %}#4CAF50{% endif %}; font-weight: bold;">
+                            {{ message }}
+                        </p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <form action="{{ url_for('create_batch') }}" method="POST">
+            
+            <div class="form-group">
+                <label for="batch_name">Batch Base Name (e.g., "Batch-A")</label>
+                <input type="text" id="batch_name" name="batch_name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="batch_type">Batch Type (Parcel Size)</label>
+                <select id="batch_type" name="batch_type" required>
+                    <option value="small">Small</option>
+                    <option value="medium">Medium</option>
+                    <option value="large">Large</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="vehicle_id">Assign to Available Vehicle</label>
+                <select id="vehicle_id" name="vehicle_id">
+                    <option value="">-- Assign Later (Warehouse Mode) --</option>
+                    
+                    {% for v in vehicles %}
+                    <option value="{{ v.id }}">
+                        {{ v.vehicle_uid }} / {{ v.vehicle_type }} (Capacity: {{ v.capacity_m3 }} m³)
+                    </option>
+                    {% endfor %}
+                </select>
+                <small style="color: #aaa;">Leave empty to create a batch without a vehicle.</small>
+            </div>
+            
+            <div class="form-group" style="margin-top: 25px; text-align: center;">
+                <button type="submit" class="btn-blue">Create & Assign Batch</button>
+                <a href="{{ url_for('batch_list') }}" class="btn-blue btn-grey">Back to List</a>
+            </div>
+
+        </form>
+    </div>
+
+</body>
+</html>

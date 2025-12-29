@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle List | PTP</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='vehicle_list.css') }}">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-logo">
+            <i class="fa-solid fa-truck-fast"></i>
+            <span>Parcel Transport Planner</span>
+        </div>
+        <div class="header-user">
+            {% if session['is_admin'] %}
+                <span style="background-color: #dc3545; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-right: 5px;">ADMIN</span>
+            {% else %}
+                <span style="background-color: #28a745; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-right: 5px;">STAFF</span>
+            {% endif %}
+            
+            <span>{{ username }}</span>
+            <i class="fa-solid fa-circle-user"></i>
+            <a href="{{ url_for('logout') }}" class="logout-link" title="Logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </a>
+        </div>
+    </header>
+
+    <div class="list-container">
+        <h1 class="list-title">Vehicle Management</h1>
+
+        <div style="text-align: center;">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <p class="flash-message {{ category }}" style="color: {% if category == 'error' %}red{% else %}#4CAF50{% endif %}; font-weight: bold;">
+                            {{ message }}
+                        </p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <form method="GET" action="{{ url_for('vehicle_list') }}">
+            <div class="toolbar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" name="search_query" placeholder="Search Plate or Driver..." 
+                           value="{{ search_query or '' }}">
+                </div>
+                
+                {% if session['is_admin'] %}
+                <a href="{{ url_for('vehicle_add') }}" class="btn-create">
+                    <i class="fa-solid fa-plus"></i> Add New Vehicle
+                </a>
+                {% endif %}
+            </div>
+        </form>
+
+        <table class="batch-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Vehicle ID</th>
+                    <th>Vehicle Type</th>
+                    <th>Plate Number</th>
+                    <th>Driver Name</th>
+                    <th>Status</th>
+                    {% if session['is_admin'] %}
+                    <th>Actions</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for vehicle in vehicles %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>
+                        <span class="batch-id-link" style="font-weight: bold;">{{ vehicle.vehicle_uid }}</span>
+                    </td>
+                    <td>{{ vehicle.vehicle_type }}</td>
+                    <td>{{ vehicle.plate_number }}</td>
+                    <td>{{ vehicle.driver_name or '-' }}</td>
+                    <td>
+                        {% if vehicle.status == 'Available' %}
+                            <span style="color: #28A745; font-weight: bold;"><i class="fa-solid fa-check-circle"></i> {{ vehicle.status }}</span>
+                        {% elif vehicle.status == 'Transporting' %}
+                            <span style="color: #FFC107; font-weight: bold;"><i class="fa-solid fa-truck-moving"></i> {{ vehicle.status }}</span>
+                        {% elif vehicle.status == 'Maintenance' %}
+                            <span style="color: #DC3545; font-weight: bold;"><i class="fa-solid fa-screwdriver-wrench"></i> {{ vehicle.status }}</span>
+                        {% else %}
+                            <span>{{ vehicle.status }}</span>
+                        {% endif %}
+                    </td>
+                    
+                    {% if session['is_admin'] %}
+                    <td style="display: flex; gap: 10px; align-items: center;">
+                        <a href="{{ url_for('vehicle_edit', vehicle_id=vehicle.id) }}" 
+                           class="btn-blue" style="padding: 6px 12px; font-size: 0.85em; text-decoration: none; border-radius: 4px;">
+                            <i class="fa-solid fa-pen"></i> Edit
+                        </a>
+
+                        <form action="{{ url_for('vehicle_delete', vehicle_id=vehicle.id) }}" method="POST"
+                              onsubmit="return confirm('Are you sure you want to delete vehicle {{ vehicle.vehicle_uid }}? This might fail if it is assigned to active batches.');">
+                            <button type="submit" class="btn-delete" style="padding: 6px 12px; font-size: 0.85em; border: none; cursor: pointer; border-radius: 4px;">
+                                <i class="fa-solid fa-trash"></i> Delete
+                            </button>
+                        </form>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+                
+                {% if not vehicles %}
+                <tr>
+                    <td colspan="{% if session['is_admin'] %}7{% else %}6{% endif %}" style="text-align: center; padding: 20px; color: #666;">
+                        No vehicles found. 
+                        {% if session['is_admin'] %}
+                            <a href="{{ url_for('vehicle_add') }}" style="color: #007bff;">Add one now</a>.
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+
+        <div class="pagination">
+            <span>Showing {{ vehicles|length }} vehicles</span>
+        </div>
+
+    </div>
+
+    <a href="{{ url_for('dashboard') }}" class="back-button">Back to Mainpage</a>
+
+</body>
+</html>

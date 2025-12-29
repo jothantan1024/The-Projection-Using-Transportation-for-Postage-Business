@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Vehicle | PTP</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='create_batch.css') }}">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-logo">...</div>
+        <div class="header-user">
+            <span>{{ username }}</span> ...
+        </div>
+    </header>
+
+    <div class="form-container">
+        <h1 class="form-title">Edit Vehicle: {{ vehicle.vehicle_uid }}</h1>
+
+        <div style="text-align: center;">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <p class="flash-message {{ category }}" style="color: {% if category == 'error' %}red{% else %}#4CAF50{% endif %}; font-weight: bold;">
+                            {{ message }}
+                        </p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <form action="{{ url_for('vehicle_edit', vehicle_id=vehicle.id) }}" method="POST">
+            
+            <div style="display: flex; gap: 20px;">
+                <div style="flex: 1;">
+                    <div class="form-group">
+                        <label for="vehicle_uid">Vehicle ID</label>
+                        <input type="text" id="vehicle_uid" name="vehicle_uid" 
+                               value="{{ vehicle.vehicle_uid }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vehicle_type">Vehicle Type</label>
+                        <select id="vehicle_type" name="vehicle_type" required>
+                            <option value="Motor" {% if vehicle.vehicle_type == 'Motor' %}selected{% endif %}>Motor</option>
+                            <option value="Van" {% if vehicle.vehicle_type == 'Van' %}selected{% endif %}>Van</option>
+                            <option value="Lorry" {% if vehicle.vehicle_type == 'Lorry' %}selected{% endif %}>Lorry</option>
+                            <option value="Car" {% if vehicle.vehicle_type == 'Car' %}selected{% endif %}>Car</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="capacity_m3">Capacity in m^3</label>
+                        <input type="number" step="0.1" id="capacity_m3" name="capacity_m3" 
+                               value="{{ vehicle.capacity_m3 }}" required>
+                    </div>
+                </div>
+                
+                <div style="flex: 1;">
+                    <div class="form-group">
+                        <label for="plate_number">Plate Number</label>
+                        <input type="text" id="plate_number" name="plate_number" 
+                               value="{{ vehicle.plate_number }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="driver_name">Driver Name</label>
+                        <input type="text" id="driver_name" name="driver_name" 
+                               value="{{ vehicle.driver_name or '' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="color">Color</label>
+                        <input type="text" id="color" name="color" 
+                               value="{{ vehicle.color or '' }}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select id="status" name="status" required>
+                            <option value="Available" {% if vehicle.status == 'Available' %}selected{% endif %}>Available</option>
+                            <option value="Transporting" {% if vehicle.status == 'Transporting' %}selected{% endif %}>Transporting</option>
+                            <option value="Maintenance" {% if vehicle.status == 'Maintenance' %}selected{% endif %}>Maintenance</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 25px; text-align: center;">
+                <button type="submit" class="btn-blue">Update Vehicle</button>
+                <a href="{{ url_for('vehicle_list') }}" class="btn-blue btn-grey">Cancel</a>
+            </div>
+
+        </form>
+    </div>
+
+</body>
+</html>

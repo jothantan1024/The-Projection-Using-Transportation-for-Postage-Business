@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Dashboard | PTP</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='analysis.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-logo">
+            <i class="fa-solid fa-truck-fast"></i>
+            <span>Parcel Transport Planner</span>
+        </div>
+        <div class="header-user">
+            {% if session['is_admin'] %}
+                <span style="background-color: #dc3545; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-right: 5px;">ADMIN</span>
+            {% else %}
+                <span style="background-color: #28a745; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-right: 5px;">STAFF</span>
+            {% endif %}
+            
+            <span>{{ username }}</span>
+            <i class="fa-solid fa-circle-user"></i>
+            <a href="{{ url_for('logout') }}" class="logout-link" title="Logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </a>
+        </div>
+    </header>
+
+    <div class="analysis-container">
+        
+        <h1 class="page-title"><i class="fa-solid fa-chart-pie"></i> System Analytics</h1>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="icon-box blue"><i class="fa-solid fa-calendar-day"></i></div>
+                <div class="stat-info">
+                    <div class="value">{{ stats.parcels_today }}</div>
+                    <div class="label">Parcels Today</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="icon-box green"><i class="fa-solid fa-boxes-stacked"></i></div>
+                <div class="stat-info">
+                    <div class="value">{{ stats.parcels_total }}</div>
+                    <div class="label">Total Processed</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="icon-box orange"><i class="fa-solid fa-truck-ramp-box"></i></div>
+                <div class="stat-info">
+                    <div class="value">{{ stats.most_used_vehicle }}</div>
+                    <div class="label">Top Vehicle Type</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="details-grid">
+            
+            <div class="large-card">
+                <h3><i class="fa-solid fa-layer-group"></i> Parcel Composition</h3>
+                <div class="chart-container">
+                    
+                    <div class="chart-row">
+                        <div class="chart-label">Small</div>
+                        <div class="chart-bar-bg">
+                            <div class="chart-bar-fill small" style="width: {{ (stats.small_count / (stats.parcels_total or 1) * 100) }}%;"></div>
+                        </div>
+                        <div class="chart-value">{{ stats.small_count }}</div>
+                    </div>
+
+                    <div class="chart-row">
+                        <div class="chart-label">Medium</div>
+                        <div class="chart-bar-bg">
+                            <div class="chart-bar-fill medium" style="width: {{ (stats.medium_count / (stats.parcels_total or 1) * 100) }}%;"></div>
+                        </div>
+                        <div class="chart-value">{{ stats.medium_count }}</div>
+                    </div>
+
+                    <div class="chart-row">
+                        <div class="chart-label">Large</div>
+                        <div class="chart-bar-bg">
+                            <div class="chart-bar-fill large" style="width: {{ (stats.large_count / (stats.parcels_total or 1) * 100) }}%;"></div>
+                        </div>
+                        <div class="chart-value">{{ stats.large_count }}</div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="large-card">
+                <h3><i class="fa-solid fa-clock-rotate-left"></i> Recent Batches</h3>
+                <ul class="recent-list">
+                    {% for batch in stats.recent_batches %}
+                        <li class="recent-item">
+                            <span class="batch-name">{{ batch.batch_name }}</span>
+                            {% if batch.status == 'Completed' %}
+                                <span class="badge completed">Completed</span>
+                            {% elif batch.status == 'Full' %}
+                                <span class="badge full">Full</span>
+                            {% else %}
+                                <span class="badge progress">In Progress</span>
+                            {% endif %}
+                        </li>
+                    {% else %}
+                        <li style="color: #999; text-align: center; padding: 20px;">No recent activity.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+
+    <a href="{{ url_for('dashboard') }}" class="back-button">Back to Dashboard</a>
+
+</body>
+</html>

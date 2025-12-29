@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail: {{ batch.batch_name }} | PTP</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='batch_detail.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+
+    <style>
+        .batch-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .label {
+            font-size: 0.85em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: bold;
+        }
+
+        .value {
+            font-size: 1.1em;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .value-large {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        @media screen and (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 10px;
+                padding: 15px;
+            }
+
+            .header-user {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .detail-title {
+                font-size: 1.5rem;
+                margin: 20px 0;
+            }
+
+            .detail-container {
+                padding: 10px;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .batch-info-grid {
+                grid-template-columns: 1fr !important; 
+                gap: 10px;
+            }
+
+            .btn-blue, 
+            select, 
+            form button {
+                width: 100% !important;
+                box-sizing: border-box;
+                margin-bottom: 10px;
+            }
+            
+            .button-group div[style*="background-color: #f8f9fa"] {
+                padding: 15px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-logo">
+            <i class="fa-solid fa-truck-fast"></i>
+            <span>Parcel Transport Planner</span>
+        </div>
+        <div class="header-user">
+            {% if session['is_admin'] %}
+                <span style="background-color: #dc3545; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-right: 5px;">ADMIN</span>
+            {% else %}
+                <span style="background-color: #28a745; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-right: 5px;">DRIVER</span>
+            {% endif %}
+            
+            <span>{{ username }}</span>
+            <i class="fa-solid fa-circle-user"></i>
+            <a href="{{ url_for('logout') }}" class="logout-link" title="Logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </a>
+        </div>
+    </header>
+
+    <h1 class="detail-title" style="text-align: center;">Batch Detail</h1>
+
+    <div style="text-align: center; margin-bottom: 20px;">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <p class="flash-message {{ category }}" style="color: {% if category=='error' %}red{% else %}green{% endif %}; font-weight: bold;">
+                        {{ message }}
+                    </p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <main class="detail-container" style="max-width: 900px; margin: 0 auto; padding: 20px;">
+
+        <section class="detail-panel" style="text-align: center; margin-bottom: 30px;">
+            <a href="{{ url_for('batch_parcel_list', batch_id=batch.id) }}" class="btn-blue" style="padding: 15px 30px; display: inline-block; text-decoration: none;">
+                <i class="fa-solid fa-boxes-stacked"></i>
+                View {{ batch.parcels | length }} Parcels in this Batch
+            </a>
+        </section>
+
+        <section class="detail-panel" style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+            <h3 style="border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px;">Batch Information</h3>
+            
+            <div class="batch-info-grid">
+                
+                <div class="info-item">
+                    <span class="label">Batch Number</span>
+                    <span class="value">{{ batch.batch_name }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Batch Type</span>
+                    <span class="value">{{ batch.batch_type | capitalize }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Assigned Vehicle</span>
+                    <span class="value">
+                        {% if batch.vehicle %}
+                            {{ batch.vehicle.vehicle_type }} ({{ batch.vehicle.plate_number }})
+                            <br><span style="font-size: 0.8em; color: #888;">Driver: {{ batch.vehicle.driver_name }}</span>
+                        {% else %}
+                            <span style="color: #FFC107;">Pending Assignment</span>
+                        {% endif %}
+                    </span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="label">Load Utilization</span>
+                    <span class="value-large" style="color: {% if (batch.current_volume / batch.max_volume * 100) >= 90 %}#F44336{% else %}#00BFFF{% endif %};">
+                        {{ (batch.current_volume / batch.max_volume * 100) | round(0) | int }}%
+                    </span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Volume Usage (m³)</span>
+                    <span class="value">{{ batch.current_volume | round(3) }} / {{ batch.max_volume }} m³</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Status</span>
+                    {% if batch.status == 'Completed' %}
+                        <span class="value" style="color: #28A745; font-weight: bold;">Completed</span>
+                    {% elif batch.status == 'Full' %}
+                        <span class="value" style="color: #DC3545; font-weight: bold;">Full (Waiting Dispatch)</span>
+                    {% elif batch.status == 'Ready' %}
+                        <span class="value" style="color: #FFC107; font-weight: bold;">Dispatched (Driver Ready)</span>
+                    {% elif batch.status == 'Transporting' %}
+                        <span class="value" style="color: #17a2b8; font-weight: bold;">In Transit</span>
+                    {% else %}
+                        <span class="value">{{ batch.status }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="info-item">
+                    <span class="label">Parcel Count</span>
+                    <span class="value-large">{{ batch.parcels | length }}</span>
+                </div>
+
+                {% if batch.completion_time %}
+                <div class="info-item">
+                    <span class="label">Completion Time</span>
+                    <span class="value">{{ batch.completion_time.strftime('%d %b %Y, %I:%M %p') }}</span>
+                </div>
+                {% endif %}
+
+            </div>
+        </section>
+
+        <section class="button-group" style="flex-direction: column; align-items: center; margin-top: 30px;">
+            
+            {% if session['is_admin'] %}
+                
+                {% if not batch.vehicle_id %}
+                    <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; width: 100%; text-align: center; border: 1px solid #FFC107; box-sizing: border-box;">
+                        <h3 style="color: #856404; margin-top: 0; font-size: 1.1rem; margin-bottom: 15px;">⚠️ Assign Vehicle to Dispatch</h3>
+                        <form action="{{ url_for('assign_vehicle', batch_id=batch.id) }}" method="POST" style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
+                            <select name="vehicle_id" required style="padding: 10px; border-radius: 5px; width: 100%; max-width: 300px; border: 1px solid #ccc;">
+                                <option value="" disabled selected>Select Available Vehicle</option>
+                                {% for v in vehicles %}
+                                    <option value="{{ v.id }}">
+                                        {{ v.vehicle_uid }} ({{ v.vehicle_type }} - {{ v.capacity_m3 }}m³) - {{ v.driver_name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn-blue" style="margin: 0; background-color: #28a745; padding: 10px 20px; width: 100%; max-width: 300px; cursor: pointer; color: white; border: none; border-radius: 5px;">Assign & Prepare</button>
+                        </form>
+                        {% if not vehicles %}
+                            <p style="color: #dc3545; font-size: 0.9em; margin-top: 5px;">No available vehicles found!</p>
+                        {% endif %}
+                    </div>
+
+                {% elif batch.status == 'In Progress' or batch.status == 'Full' %}
+                    <div style="text-align: center; width: 100%;">
+                        <p style="color: #666; margin-bottom: 10px;">Vehicle assigned. Ready to send to driver?</p>
+                        
+                        <form action="{{ url_for('batch_dispatch', batch_id=batch.id) }}" method="POST"
+                              onsubmit="
+                                var load = {{ (batch.current_volume / batch.max_volume * 100) | int }};
+                                if (load < 70) {
+                                    return confirm('⚠️ Low Load Utilization (' + load + '%).\n\nAre you sure you want to dispatch this batch efficiently?');
+                                }
+                                return true;
+                              ">
+                            <button type="submit" class="btn-blue" style="background-color: #E0A800; font-size: 1.1rem; padding: 12px 30px; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                                <i class="fa-solid fa-paper-plane"></i> Dispatch to Driver
+                            </button>
+                        </form>
+                    </div>
+
+                {% elif batch.status == 'Ready' %}
+                    <button disabled class="btn-blue" style="background-color: #ccc; cursor: not-allowed; padding: 12px 30px; border: none; border-radius: 5px; color: white;">
+                        <i class="fa-solid fa-hourglass-half"></i> Waiting for Driver to Start...
+                    </button>
+
+                {% elif batch.status == 'Transporting' %}
+                    <button disabled class="btn-blue" style="background-color: #17a2b8; cursor: not-allowed; padding: 12px 30px; border: none; border-radius: 5px; color: white;">
+                        <i class="fa-solid fa-truck-fast"></i> Driver is Delivering...
+                    </button>
+
+                {% endif %}
+
+            {% else %}
+                <div style="color: #666;">Use your Dashboard to manage mission status.</div>
+            {% endif %}
+            
+            <div style="margin-top: 30px; width: 100%; text-align: center;">
+                <a href="{{ url_for('batch_list') }}" class="btn-blue btn-grey" style="text-decoration: none; padding: 10px 20px; background-color: #6c757d; color: white; border-radius: 5px; display: inline-block;">Back to List</a>
+            </div>
+        </section>
+
+    </main>
+
+</body>
+</html>

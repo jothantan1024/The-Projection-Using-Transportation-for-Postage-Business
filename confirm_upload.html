@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Upload | PTP</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='create_batch.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    
+    <style>
+        /* 额外加一点样式给图片预览 */
+        .preview-image-container {
+            text-align: center;
+            margin-bottom: 20px;
+            background-color: #333;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 5px;
+            border: 2px solid #555;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-logo"><i class="fa-solid fa-truck-fast"></i> <span>Parcel Transport Planner</span></div>
+        <div class="header-user"><span>{{ username }}</span> <i class="fa-solid fa-circle-user"></i></div>
+    </header>
+
+    <div class="form-container">
+        <h1 class="form-title">Confirm AI Analysis</h1>
+        
+        <div style="text-align: center; color: #ccc; margin-bottom: 20px;">
+            Please review and correct the AI results before saving.
+        </div>
+
+        <form action="{{ url_for('confirm_parcel') }}" method="POST">
+            
+            <div class="preview-image-container">
+                <p style="color: #aaa; margin-bottom: 5px;">Captured Image</p>
+                <img src="{{ url_for('static', filename='uploads/' + image_filename) }}" class="preview-image" alt="Parcel Preview">
+                
+                <input type="hidden" name="image_filename" value="{{ image_filename }}">
+            </div>
+
+            <div style="display: flex; gap: 20px;">
+                <div style="flex: 1;">
+                    <div class="form-group">
+                        <label for="external_parcel_id">Parcel ID (AI Read)</label>
+                        <input type="text" id="external_parcel_id" name="external_parcel_id" 
+                               value="{{ ai_data.external_id }}" required 
+                               style="background-color: #e8f0fe; color: #333; font-weight: bold;">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dimensions">Dimensions (AI Est.)</label>
+                        <input type="text" id="dimensions" name="dimensions" 
+                               value="{{ ai_data.dimensions }}">
+                    </div>
+
+                    <div class="input-group">
+                         <label>Delivery Destination:</label>
+                         <input type="text" name="delivery_address" value="Client A (Johor Bahru Branch)" required 
+                         style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
+                    </div>
+                </div>
+                
+                <div style="flex: 1;">
+                    <div class="form-group">
+                        <label for="estimated_volume">Volume m³ (AI Est.)</label>
+                        <input type="number" step="0.0001" id="estimated_volume" name="estimated_volume" 
+                               value="{{ ai_data.volume }}" required
+                               style="background-color: #e8f0fe; color: #333; font-weight: bold;">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="weight">Weight kg (Est.)</label>
+                        <input type="number" step="0.01" id="weight" name="weight" 
+                               value="{{ ai_data.weight }}">
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin: 15px 0; padding: 10px; background-color: #555; border-radius: 5px;">
+                <span style="color: #ccc;">System Recommendation:</span>
+                <strong style="color: #00BFFF;">
+                    {% if ai_data.volume < 0.01 %} Small Batch
+                    {% elif ai_data.volume < 0.03 %} Medium Batch
+                    {% else %} Large Batch
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="form-group" style="margin-top: 25px; text-align: center;">
+                <button type="submit" class="btn-blue" style="background-color: #28A745;">Confirm & Save</button>
+                <a href="{{ url_for('upload') }}" class="btn-blue btn-grey">Cancel</a>
+            </div>
+
+        </form>
+    </div>
+
+</body>
+</html>
